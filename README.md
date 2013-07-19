@@ -8,14 +8,28 @@
 
 To use _jQuery Validate_ you just need to include in your code a version of the <a href="http://jquery.com/" target="_blank">jQuery library</a> equal or more recent than `1.7` and a file with the plugin. <a href="https://www.dropbox.com/s/p5xhpb52572xy5b/jQuery%20Validate%201.1.2.zip" target="_blank">Click here to download the plugin</a>.
 
-After this, you just need select your form and calling the `jQuery.fn.validate` method.
+After this, you just need select your form and calling the `jQuery.fn.initCheck` method.
 
 See a example:
 ```javascript
-jQuery('form').validate();
+jQuery('form').initCheck();
 ```
-
-After calling the `jQuery.fn.validate` method, you can validate your fields using <a href="http://www.w3.org/TR/2011/WD-html5-20110525/elements.html#embedding-custom-non-visible-data-with-the-data-attributes" target="_blank">data attributes</a>, that are valid to the <a href="http://www.w3.org/TR/html5/" target="_blank">HTML5</a>, according to the <a href="http://www.w3.org/" target="_blank">W3C</a>.
+or
+```javascript
+$('.container').initCheck({
+eachValidField : function() {
+    $(this).closest('div').removeClass('error').addClass('success');
+},
+eachInvalidField : function() {
+   $(this).closest('div').removeClass('success').addClass('error');
+}
+});
+if($('.container').check())
+    alert("ok");
+else
+    alert("error");
+```
+After calling the `jQuery.fn.initCheck` method, you can validate your fields using <a href="http://www.w3.org/TR/2011/WD-html5-20110525/elements.html#embedding-custom-non-visible-data-with-the-data-attributes" target="_blank">data attributes</a>, that are valid to the <a href="http://www.w3.org/TR/html5/" target="_blank">HTML5</a>, according to the <a href="http://www.w3.org/" target="_blank">W3C</a>.
 
 See a example to required field:
 ```html
@@ -242,8 +256,8 @@ Example:
 jQuery('form').validateDestroy();
 ```
 
-## Changing the default values of `jQuery.fn.validate`
-You can changes the default values of `jQuery.fn.validate` using `jQuery.validateSetup` method.
+## Changing the default values of `jQuery.fn.initCheck`
+You can changes the default values of `jQuery.fn.initCheck` using `jQuery.validateSetup` method.
 
 Example:
 ```javascript
@@ -266,7 +280,7 @@ Example:
 ```
 
 ```javascript
-$('form').validate({
+$('form').initCheck({
 	description : {
 		test : {
 			required : '<div class="error">Required</div>',
@@ -289,7 +303,7 @@ Example:
 ```
 
 ```javascript
-jQuery('form').validate();
+jQuery('form').initCheck();
 
 jQuery.validateExtend({
 	age : {
