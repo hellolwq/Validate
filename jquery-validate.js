@@ -7,7 +7,6 @@
         extend = {},
         // Method to validate each fields
         validateField = function(event, options) {
-            debugger
             var
                 // Field status
                 status = {
@@ -89,7 +88,6 @@
             fieldRequired = reTrue.test(fieldRequired);
             // Is required?
             if(fieldRequired) {
-                debugger
                 // Verifies the field type
                 if(field.is(type[0] + ',' + type[1])) {
                     // Is empty?
@@ -180,7 +178,6 @@
             // Returns the field status
             return status;
         };
-    debugger
     $.extend({
         // Method to extends validations
         validateExtend : function(options) {
@@ -191,12 +188,42 @@
             return $.extend(defaults, options);
         }
     }).fn.extend({
+        check : function(){
+            var options = defaults;
+            var dom = $(this);
+            dom.validateDestroy();
+            dom.data(name, {
+                    options : options
+             });
+            var fields = dom.find(allTypes),namespace = options.namespace;
+            //if(dom.is('[id]')) {
+            //    fields = fields.add('[form="' + form.prop('id') + '"]').filter(allTypes);
+            //}
+            fields = fields.filter(options.filter);
+            var domValid = true;
+            fields.each(function() {
+                var status = validateField.call(this, event, options);
+                if(!status.pattern || !status.conditional || !status.required) {
+                    domValid = false;
+                }
+            });
+            if(domValid) {
+                if($.isFunction(options.valid)) {
+                    options.valid.call(dom, event, options);
+                }
+                return true;
+            } else {
+                if($.isFunction(options.invalid)) {
+                    options.invalid.call(dom, event, options);
+                }
+                return false;
+            }
+        },
         // Method to validate forms
-        validate : function(options) {
-            debugger
-            options = $.extend({}, defaults, options);
+        initCheck : function(options) {
+            //options = $.extend({}, defaults, options);
+            options = $.extend(defaults, options);
             return $(this).validateDestroy().each(function() {
-                debugger
                 var form = $(this);
                 // This is a form?
                 if(form.is('form')) {
@@ -232,7 +259,6 @@
                     // If onSubmit is enabled
                     if(!!options.onSubmit) {
                         form.on('submit.' + namespace, function(event) {
-                            debugger;
                             var formValid = true;
                             fields.each(function() {
                                 var status = validateField.call(this, event, options);
@@ -265,28 +291,27 @@
         },
         // Method to destroy validations
         validateDestroy : function() {
-            debugger;
             var
                 form = $(this),
                 dataValidate = form.data(name);
             // If this is a form
-            if(form.is('form') && $.isPlainObject(dataValidate) && typeof(dataValidate.options.nameSpace) == 'string') {
+            if(form.is('form') && $.isPlainObject(dataValidate) && typeof(dataValidate.options.namespace) == 'string') {
                 var fields = form.removeData(name).find(allTypes).add(form);
                 if(form.is('[id]')) {
                     fields = fields.add($('[form="' + form.prop('id') + '"]').filter(allTypes));
                 }
-                fields.off('.' + dataValidate.options.nameSpace);
+                fields.off('.' + dataValidate.options.namespace);
             }
             return form;
         }
     });
 })({
     // Send form if is valid?
-    sendForm : true,
+    sendForm : false,
     // Use WAI-ARIA properties
     waiAria : true,
     // Validate on submit?
-    onSubmit : true,
+    onSubmit : false,
     // Validate on onKeyup?
     onKeyup : false,
     // Validate on onBlur?
@@ -294,7 +319,7 @@
     // Validate on onChange?
     onChange : false,
     // Default namespace
-    nameSpace : 'validate',
+    namespace : 'validate',
     // Conditional functions
     conditional : {},
     // Prepare functions
