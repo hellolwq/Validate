@@ -1,7 +1,8 @@
-/* http://plugins.jquery.com/validate */
+
+/* https://github.com/hellolwq/Validate */
 ;(function(defaults, $, window, undefined) {
     var
-        type = ['input:not([type]),input[type="color"],input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="email"],input[type="file"],input[type="hidden"],input[type="month"],input[type="number"],input[type="password"],input[type="range"],input[type="search"],input[type="tel"],input[type="text"],input[type="time"],input[type="url"],input[type="week"],textarea', 'select', 'input[type="checkbox"],input[type="radio"]'],
+        type = ['input[type="color"],input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="email"],input[type="file"],input[type="hidden"],input[type="month"],input[type="number"],input[type="password"],input[type="range"],input[type="search"],input[type="tel"],input[type="text"],input[type="time"],input[type="url"],input[type="week"],textarea', 'select', 'input[type="checkbox"],input[type="radio"]'],
         // All field types
         allTypes = type.join(','),
         extend = {},
@@ -195,6 +196,7 @@
             dom.data(name, {
                     options : options
              });
+             debugger;
             var fields = dom.find(allTypes),namespace = options.namespace;
             //if(dom.is('[id]')) {
             //    fields = fields.add('[form="' + form.prop('id') + '"]').filter(allTypes);
@@ -209,12 +211,12 @@
             });
             if(domValid) {
                 if($.isFunction(options.valid)) {
-                    options.valid.call(dom, event, options);
+                    options.valid.call(dom, event, options,fields);
                 }
                 return true;
             } else {
                 if($.isFunction(options.invalid)) {
-                    options.invalid.call(dom, event, options);
+                    options.invalid.call(dom, event, options,fields);
                 }
                 return false;
             }
@@ -339,3 +341,21 @@
     // A fielter to the fields
     filter : '*'
 }, jQuery, window);
+
+(function(rules,jQuery,window){
+    jQuery.validateExtend(rules);
+})({
+        age : {
+            pattern : /^[0-9]+$/,
+            conditional : function(value) {
+                return Number(value) > 0;
+            }
+        },
+        url : {
+            pattern : /^https?:\/\/[^\s]*$/i
+        },
+        mail:{
+            pattern : /^([\da-z\.-]+)@([\da-z\.-]+)$/i
+        },
+        number:{pattern : /^[\d]+$/i}
+},jQuery,window);
